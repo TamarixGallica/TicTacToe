@@ -3,6 +3,7 @@ package kayttoliittyma;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.*;
@@ -90,8 +91,19 @@ public class FrIkkuna extends JFrame {
 
 //		Initialize random number generator and variables for horizontal and vertical positions for CPU
 		Random random = new Random();
-		int horizontal = 0;
-		int vertical = 0;
+		int horizontal = -1;
+		int vertical = -1;
+
+        // First attempt at creating AI
+/*
+		ArrayList<int[][]> winningSquares = CPUCheckForWinningSquare();
+
+        if(winningSquares.size() > 0)
+        {
+            int[][] square = winningSquares.get(random.nextInt(winningSquares.size()));
+            horizontal = square[0][0];
+        }
+*/
 
 //		Randomly choose a square and continue until a free square is chosen (value == 0)
 		do {
@@ -105,6 +117,33 @@ public class FrIkkuna extends JFrame {
 		btSquareButtons[horizontal][vertical].setText("0");
 		
 	}
+
+	private ArrayList<int[][]> CPUCheckForWinningSquare() {
+
+	    ArrayList returnList = new ArrayList<int[][]>();
+
+	    for(int i=0; i < pieces.length; i++)
+        {
+            for(int j=0; j < pieces.length; j++)
+            {
+                // If the square already has a piece there's no need to test it
+                if(pieces[i][j]!=0)
+                    continue;
+
+                // Temporarily place CPU marker on the square to be tested
+                pieces[i][j] = 2;
+
+                // Check if CPU would win
+                if(CheckForWinner()==2)
+                    returnList.add(new int[i][j]);
+
+                // Empty the square and continue
+                pieces[i][j] = 0;
+            }
+        }
+
+        return returnList;
+    }
 
 	private int CheckForWinner() {
 
