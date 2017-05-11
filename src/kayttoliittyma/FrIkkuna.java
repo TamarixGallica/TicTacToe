@@ -86,7 +86,7 @@ public class FrIkkuna extends JFrame {
 		sisalto.add(btNewGame);
 	}
 	
-	public void teeTietokoneenValinta() {
+	private void CPUPlaceMarker() {
 
 //		Initialize random number generator and variables for horizontal and vertical positions for CPU
 		Random random = new Random();
@@ -105,7 +105,56 @@ public class FrIkkuna extends JFrame {
 		btSquareButtons[horizontal][vertical].setText("0");
 		
 	}
-	
+
+	private int CheckForWinner() {
+
+		for(int i=0; i < pieces.length; i++)
+		{
+			// Take bitwise AND of horizontal row and check if result is 1
+			// If it is, player has won
+			if((pieces[i][0] & pieces[i][1] & pieces[i][2]) == 1)
+				return 1;
+
+			// Take bitwise AND of horizontal row and check if result is 2
+			// If it is, CPU has won
+			if((pieces[i][0] & pieces[i][1] & pieces[i][2]) == 2)
+				return 2;
+
+			// Take bitwise AND of vertical row and check if result is 1
+			// If it is, player has won
+			if((pieces[0][i] & pieces[1][i] & pieces[2][i]) == 1)
+				return 1;
+
+			// Take bitwise AND of vertical row and check if result is 2
+			// If it is, CPU has won
+			if((pieces[0][i] & pieces[1][i] & pieces[2][i]) == 2)
+				return 2;
+		}
+
+		// Take bitwise AND of diagonal line \ and check if result is 1
+		// If it is, player has won
+		if((pieces[0][0] & pieces[1][1] & pieces[2][2]) == 1)
+			return 1;
+
+		// Take bitwise AND of diagonal line \ and check if result is 2
+		// If it is, CPU has won
+		if((pieces[0][0] & pieces[1][1] & pieces[2][2]) == 2)
+			return 2;
+
+		// Take bitwise AND of diagonal line / and check if result is 1
+		// If it is, player has won
+		if((pieces[0][2] & pieces[1][1] & pieces[2][0]) == 1)
+			return 1;
+
+		// Take bitwise AND of diagonal line / and check if result is 2
+		// If it is, CPU has won
+		if((pieces[0][2] & pieces[1][1] & pieces[2][0]) == 2)
+			return 2;
+
+		// If all the checks fall trhough neither has won the game and game may continue
+		return 0;
+	}
+
 	private void AloitaUusiPeli() {
 
 		numberOfChoicesMade = 0;
@@ -115,6 +164,7 @@ public class FrIkkuna extends JFrame {
 				btSquareButtons[i][j].setText("");
 			}
 		}
+
 
 		for (int i = 0; i < pieces.length; i++) {
 			for (int j = 0; j < pieces.length; j++) {
@@ -139,14 +189,31 @@ public class FrIkkuna extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(numberOfChoicesMade < 3)
+			if(numberOfChoicesMade < 5)
 			{
-				pieces[horizontal][vertical]=1;
+				// Check if square is available
+				if(pieces[horizontal][vertical]==0)
+					// If square is available place marker there
+					pieces[horizontal][vertical]=1;
+				else
+					// If square is not available exit the method
+					return;
 				btSquareButtons[horizontal][vertical].setText("X");
 				numberOfChoicesMade++;
-				teeTietokoneenValinta();
+
+				// Check if the player has won
+				if(CheckForWinner()==1) {
+					System.out.println("Player has won.");
+				}
+
+				// If player didn't win this turn let CPU place a marker
+				CPUPlaceMarker();
+
+				// Check if CPU has won
+				if(CheckForWinner()==2)
+					System.out.println("CPU has won");
 			}
-			System.out.println("Generic ActionListener triggered and placed a market at "+horizontal+" "+vertical);
+			//System.out.println("Generic ActionListener triggered and placed a market at "+horizontal+" "+vertical);
 		}
 	}
 
